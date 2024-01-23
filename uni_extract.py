@@ -12,14 +12,14 @@ def extracturl(page):
     if tplwrpr:
         x=tplwrpr.query_selector_all('._1822._0fc7._7efa')
         print(len(x))
-    # for i in x:
-    #     if i:
-    #         anchors = i.query_selector_all('a')
-    #         for anchor in anchors:
-    #             href=anchor.get_attribute('href')
+    for i in x:
+        if i:
+            anchors = i.query_selector_all('a')
+            for anchor in anchors:
+                href=anchor.get_attribute('href')
                 
-    #             print(href)
-    #             break
+                print(href)
+                break
 
             
 
