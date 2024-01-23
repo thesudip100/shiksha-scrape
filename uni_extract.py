@@ -5,7 +5,7 @@ import time
 #import requests
 #from requests import head
 
-main_url='https://www.shiksha.com/studyabroad/australia/universities'
+main_url='https://www.shiksha.com'
 
 unique_urls = {}
 
@@ -21,8 +21,10 @@ def extracturl(page):
             anchors = i.query_selector_all('a')
             for anchor in anchors:
                 href=anchor.get_attribute('href')
-                unique_identifier = f'{href}'
-                if href:
+                full_href = urljoin(main_url,href)
+                unique_identifier = f'{full_href}'
+                if full_href:
+                    
                     unique_urls[unique_identifier] = True
                     break
                 
@@ -42,9 +44,9 @@ with sync_playwright() as p:
         time.sleep(7)
 
 
-        for i in range(28):
-            page.mouse.wheel(0, 1000)
-            time.sleep(5)
+        for i in range(50):
+            page.mouse.wheel(0, 500)
+            time.sleep(2)
             extracturl(page)
             try:
                 lazy_button=tuple_wrapper.query_selector('#lazy_load_next_4')
@@ -52,6 +54,7 @@ with sync_playwright() as p:
                 #this line is hindering the data extraction
                 if button and button.is_visible():
                     button.click()
+                    page.mouse.wheel(0,-5000)
                 extracturl(page)
             except:
                 continue
