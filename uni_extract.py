@@ -33,25 +33,29 @@ with sync_playwright() as p:
         page.goto('https://www.shiksha.com/studyabroad/australia/universities')
 
         page.wait_for_selector('#main-wrapper')
-
         tuple_wrapper=page.query_selector('#tuplewrapper')
 
-        time.sleep(7)
+        time.sleep(5)
 
 
-        for i in range(50):
-            page.mouse.wheel(0, 500)
-            time.sleep(10)
+        for i in range(30):
+            page.mouse.wheel(0, 1000)
+            time.sleep(5)
 
             try:
                 lazy_button=tuple_wrapper.query_selector('#lazy_load_next_4')
                 button = lazy_button.query_selector('#lazy_load_next_btn_4')
                 if button and button.is_visible():
                     button.click()
+                    page.wait_for_timeout(15000)
+                
 
-                extracturl(page)
             except:
-                continue
+                continue        
+        extracturl(page)
+        time.sleep(5)
+
+
 
     except Exception as e:
         print(e)
