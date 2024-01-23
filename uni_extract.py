@@ -6,8 +6,11 @@ import time
 #from requests import head
 
 main_url='https://www.shiksha.com/studyabroad/australia/universities'
-extracted_urls = set()
+
+unique_urls = {}
+
 output_file = 'list.json'
+
 def extracturl(page):
     tplwrpr=page.query_selector('#tuplewrapper')
     if tplwrpr:
@@ -18,7 +21,10 @@ def extracturl(page):
             anchors = i.query_selector_all('a')
             for anchor in anchors:
                 href=anchor.get_attribute('href')
-                extracted_urls.add(href)
+                unique_identifier = f'{href}'
+                if href:
+                    unique_urls[unique_identifier] = True
+                    break
                 
 
 with sync_playwright() as p:
@@ -36,20 +42,20 @@ with sync_playwright() as p:
         time.sleep(7)
 
 
-        for i in range(12):
-            page.mouse.wheel(0, 2400)
-            time.sleep(2)
-
+        for i in range(28):
+            page.mouse.wheel(0, 1000)
+            time.sleep(5)
+            extracturl(page)
             try:
                 lazy_button=tuple_wrapper.query_selector('#lazy_load_next_4')
                 button = lazy_button.query_selector('#lazy_load_next_btn_4')
                 #this line is hindering the data extraction
                 if button and button.is_visible():
                     button.click()
-                extracturl(page)    
+                extracturl(page)
             except:
                 continue
-   
+            
                 
     except Exception as e:
         print(e)
@@ -61,12 +67,25 @@ with sync_playwright() as p:
     except Exception as ex:
         print(ex)
 
+    try: 
+        url={}
+        with open(output_file,'r') as file:
+            url = json.load(file)
+        
+        with open(output_file,'w') as file:
+            url = {**url,**unique_urls}
+            json.dump(url,file,indent=3)
 
+    except Exception as e:
+        print("Error opening file ",e)
+        with open(output_file,'w') as file:
+            json.dump(unique_urls,file,indent = 3)
 
 
     # Close the browser
     browser.close()
 
-    unique_urls = list(extracted_urls)
-    with open(output_file, 'w') as json_file:
-        json.dump(unique_urls, json_file, indent=3)
+    
+
+    # with open(output_file, 'w') as json_file:
+    #     json.dump(unique_urls, json_file, indent=3)
