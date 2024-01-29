@@ -19,8 +19,15 @@ with open(json_file,'r') as file:
 def extractcourses(page):
     courses_main = page.query_selector("#main-wrapper")
     if courses_main:
-        y = courses_main.query_selector_all("._1822._0fc7._80b2")
-        print(len(y))
+        y = courses_main.query_selector("._036cde")
+        w = y.query_selector_all("._1822._0fc7._80b2")
+        for x in w:
+            program_title_div = x.query_selector(".c8ff")
+            program_title_locator = program_title_div.query_selector("a.ripple.dark")
+            program_title_found = program_title_locator.query_selector("h3")
+            program_title = program_title_found.inner_text()
+            print(program_title)
+
 
 
 
