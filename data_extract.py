@@ -28,6 +28,49 @@ def extractcourses(page):
             program_title = program_title_found.inner_text()
             print(program_title)
 
+            # if True:
+            #     courses_details['Course Name'] = program_title
+            #     courses.append(courses_details)
+            #     data['Programs and details'] = courses
+            print(program_title)
+
+            #course duratioin
+            course_duration_locator_div = x.query_selector(".edfa")
+            course_duration_locator = course_duration_locator_div.query_selector_all("span")
+            course_duration_found = course_duration_locator[0]
+            course_duration = course_duration_found.inner_text()
+            print(course_duration)
+
+            #course_info
+            #accepted_exams
+            course_info_locator_div = x.query_selector(".cd4f._5c64.contentColumn_2")
+            course_info_locator = course_info_locator_div.query_selector_all("._77ff")
+            exam_accepted_locator = course_info_locator[0].query_selector(".dcfd.undefined")
+            if exam_accepted_locator:
+                exam_accepted_list = exam_accepted_locator.query_selector_all("li")
+                for i in exam_accepted_list:
+                    exam_accepted = i.query_selector("a")
+                    if exam_accepted:
+                        exams = exam_accepted.inner_text()
+                        print(exams)
+
+            #work-experience
+            work_experience_locator = course_info_locator[1].query_selector(".dcfd.undefined")
+            if work_experience_locator:
+                work_experience_found = work_experience_locator.query_selector_all("li")
+                for i in work_experience_found:
+                    work_experience = i.inner_text()
+                    if work_experience=='– / –':
+                        print('None')
+                    else:    
+                        print(work_experience)
+
+            #first-year tuition fee
+            tuition_fee_locator = course_info_locator[3].query_selector(".dcfd.undefined")
+            if tuition_fee_locator:
+                tuition_fee = tuition_fee_locator.inner_text()
+                print(tuition_fee)
+
 
 
 
@@ -133,6 +176,20 @@ with sync_playwright() as p:
             time.sleep(1)
             page.wait_for_selector(".d6db")
         extractcourses(page)
+        page.wait_for_selector(".d6db")
+        while True:
+            pagination_locator_div = page.query_selector(".d6db")
+            pagination_locator = pagination_locator_div.query_selector("._6583")
+            numbers_arrows = pagination_locator.query_selector_all("li")
+            # forward_arrow = numbers_arrows[6]
+            if len(numbers_arrows) >= 6 and numbers_arrows[6].is_visible():
+                numbers_arrows[6].click()
+                time.sleep(5)
+                # courses_mouse_scroll(page)
+                extractcourses(page)
+            else:
+                extractcourses(page)
+                break
 
 
 
